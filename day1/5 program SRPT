@@ -1,0 +1,69 @@
+//Write a program to compute the average waiting time and turnaround time based on Preemptive shortest remaining processing time first (SRPT) algorithm for the following set of processes, with the arrival times and the CPU-burst times given in milliseconds
+#include<stdio.h>
+#include<stdlib.h>
+
+struct process{
+    int pid;    // process id
+    int arrival_time
+    int burst_time;      
+    int remaining_time;  
+};
+
+int main(){
+    int n, i, time, smallest, complete=0, prev_smallest=-1, wait_time=0, turnaround_time=0;
+    float avg_wait_time, avg_turnaround_time;
+    struct process *proc;
+
+    printf("Enter the number of processes: ");
+    scanf("%d", &n);
+    proc = (struct process*) malloc(n * sizeof(struct process));
+
+    for(i=0; i<n; i++){
+        printf("Enter the arrival time and burst time for process %d: ", i+1);
+        scanf("%d%d", &proc[i].arrival_time, &proc[i].burst_time);
+        proc[i].pid = i+1;
+        proc[i].remaining_time = proc[i].burst_time;
+    }
+
+    printf("\nProcess\tArrival Time\tBurst Time\tWaiting Time\tTurnaround Time\n");
+
+    for(time=0; complete!=n; time++){
+        smallest = -1;
+
+        for(i=0; i<n; i++){
+            if(proc[i].arrival_time <= time && proc[i].remaining_time > 0){
+                if(smallest == -1 || proc[i].remaining_time < proc[smallest].remaining_time){
+                    smallest = i;
+                }
+            }
+        }
+
+        if(smallest != -1){
+            if(prev_smallest != smallest){
+                prev_smallest = smallest;
+                wait_time = time - proc[smallest].arrival_time;
+            }
+
+            proc[smallest].remaining_time--;
+
+            if(proc[smallest].remaining_time == 0){
+                complete++;
+                turnaround_time = time+1 - proc[smallest].arrival_time;
+                avg_turnaround_time += turnaround_time;
+                avg_wait_time += wait_time;
+
+                printf("P%d\t\t%d\t\t%d\t\t%d\t\t%d\n", proc[smallest].pid, proc[smallest].arrival_time, proc[smallest].burst_time, wait_time, turnaround_time);
+            }
+        }
+    }
+
+    avg_wait_time /= n;
+    avg_turnaround_time /= n;
+
+    printf("\nAverage Waiting Time: %f", avg_wait_time);
+    printf("\nAverage Turnaround Time: %f\n", avg_turnaround_time);
+
+    free(proc);
+
+    return 0;
+}
