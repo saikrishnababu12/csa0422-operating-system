@@ -1,0 +1,86 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+#define MAX_FRAMES 10
+#define MAX_REFERENCES 50
+
+int frames[MAX_FRAMES];  // array to store page frames
+int reference_string[MAX_REFERENCES];  // array to store page reference string
+
+int main() {
+    int num_frames, num_references, i, j, k, page_faults = 0;
+    bool is_hit;
+
+    // get input from user
+    printf("Enter the number of page frames: ");
+    scanf("%d", &num_frames);
+
+    printf("Enter the page reference sequence (separated by spaces): ");
+    for (i = 0; i < MAX_REFERENCES; i++) {
+        scanf("%d", &reference_string[i]);
+        if (reference_string[i] == -1) {  // stop reading input when -1 is encountered
+            break;
+        }
+    }
+    num_references = i;  // actual number of references
+
+    // initialize page frames with -1 (indicating an empty frame)
+    for (i = 0; i < num_frames; i++) {
+        frames[i] = -1;
+    }
+
+    // simulate page reference string using LRU page replacement algorithm
+    for (i = 0; i < num_references; i++) {
+        is_hit = false;
+
+        // check if page is already in page frames
+        for (j = 0; j < num_frames; j++) {
+            if (frames[j] == reference_string[i]) {
+                is_hit = true;
+                break;
+            }
+        }
+
+        // if page is not in page frames, find the LRU page to replace
+        if (!is_hit) {
+            page_faults++;
+
+            for (j = 0; j < num_frames; j++) {
+                int lru_index = -1;
+                for (k = i - 1; k >= 0; k--) {  // search backwards in reference string to find LRU page
+                    if (frames[j] == reference_string[k]) {
+                        lru_index = k;
+                        break;
+                    }
+                }
+                if (lru_index == -1) {  // if page is not referenced anymore, replace it
+                    frames[j] = reference_string[i];
+                    break;
+                }
+                if (k < lru_index) {  // if page is referenced earlier than current LRU page, update LRU page
+                    lru_index = k;
+                }
+                if (j == num_frames - 1) {  // if all frames are full, replace the LRU page
+                    frames[lru_index] = reference_string[i];
+                    break;
+                }
+            }
+        }
+
+        // print current state of page frames
+        printf("[%d]: ", reference_string[i]);
+        for (j = 0; j < num_frames; j++) {
+            if (frames[j] != -1) {
+                printf("%d ", frames[j]);
+            } else {
+                printf("- ");
+            }
+        }
+        printf("\n");
+    }
+
+    // print total number of page faults
+    printf("Total page faults: %d\n", page_faults);
+
+    return 0;
+}
