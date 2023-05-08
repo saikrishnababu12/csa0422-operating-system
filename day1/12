@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void best_fit(int mem_part[], int num_part, int proc_size[], int num_proc) {
+    int alloc[num_proc];
+    for (int i = 0; i < num_proc; i++) {
+        alloc[i] = -1;
+    }
+    for (int i = 0; i < num_proc; i++) {
+        int best_index = -1;
+        for (int j = 0; j < num_part; j++) {
+            if (mem_part[j] >= proc_size[i]) {
+                if (best_index == -1 || mem_part[j] < mem_part[best_index]) {
+                    best_index = j; 
+                }
+            }
+        }
+        if (best_index != -1) {
+            alloc[i] = best_index; 
+            mem_part[best_index] -= proc_size[i];
+        }
+    }
+    printf("Process No.\tProcess Size\tPartition No.\n");
+    for (int i = 0; i < num_proc; i++) {
+        printf("%d\t\t%d\t\t", i + 1, proc_size[i]);
+        if (alloc[i] != -1) {
+            printf("%d\n", alloc[i] + 1);
+        } else {
+            printf("Not allocated\n");
+        }
+    }
+}
+
+int main() {
+    int num_part, num_proc;
+    printf("Enter the number of memory partitions: ");
+    scanf("%d", &num_part);
+    int mem_part[num_part];
+    for (int i = 0; i < num_part; i++) {
+        printf("Enter the size of partition %d (in KB): ", i + 1);
+        scanf("%d", &mem_part[i]);
+    }
+    printf("Enter the number of processes: ");
+    scanf("%d", &num_proc);
+    int proc_size[num_proc];
+    for (int i = 0; i < num_proc; i++) {
+        printf("Enter the size of process %d (in KB): ", i + 1);
+        scanf("%d", &proc_size[i]);
+    }
+    best_fit(mem_part, num_part, proc_size, num_proc);
+    return 0;
+}
