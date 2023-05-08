@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+int main()
+{
+    int n, head, i, total_movement = 0;
+    printf("Enter the number of tracks: ");
+    scanf("%d", &n);
+    int tracks[n];
+
+    printf("Enter the track positions: ");
+    for (i = 0; i < n; i++) {
+        scanf("%d", &tracks[i]);
+    }
+
+    printf("Enter the initial head position: ");
+    scanf("%d", &head);
+
+    printf("Order of track requests: ");
+    for (i = 0; i < n; i++) {
+        printf("%d ", tracks[i]);
+        total_movement += abs(tracks[i] - head);
+        head = tracks[i];
+    }
+
+    printf("\nTotal head movement: %d\n", total_movement);
+
+    float avg_head_movement = (float)total_movement / n;
+    printf("Average head movement: %0.2f\n", avg_head_movement);
+
+    return 0;
+}
