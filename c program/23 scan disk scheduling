@@ -1,0 +1,114 @@
+#include <stdio.h>
+
+#include <stdlib.h>
+
+#define MAX_TRACKS 100
+
+void sort(int arr[], int n) {
+
+    for (int i = 0; i < n - 1; i++) {
+
+        for (int j = 0; j < n - i - 1; j++) {
+
+            if (arr[j] > arr[j + 1]) {
+
+                int temp = arr[j];
+
+                arr[j] = arr[j + 1];
+
+                arr[j + 1] = temp;
+
+            }
+
+        }
+
+    }
+
+}
+
+
+float calculateAverageHeadMovement(int tracks[], int n, int initialPosition) {
+
+    int direction;
+
+    int currentPos = initialPosition;
+
+    int totalHeadMovement = 0;
+
+
+    sort(tracks, n);
+
+
+    int initialPosIndex = 0;
+
+    while (tracks[initialPosIndex] < initialPosition) {
+
+        initialPosIndex++;
+
+    }
+
+
+
+    for (int i = initialPosIndex; i < n; i++) {
+
+        totalHeadMovement += abs(tracks[i] - currentPos);
+
+        currentPos = tracks[i];
+
+    }
+
+
+    totalHeadMovement += abs(currentPos - 0);
+
+    currentPos = 0;
+
+
+    for (int i = 0; i < initialPosIndex; i++) {
+
+        totalHeadMovement += abs(tracks[i] - currentPos);
+
+        currentPos = tracks[i];
+
+    }
+
+    return (float)totalHeadMovement / n;
+
+}
+
+int main() {
+
+    int tracks[MAX_TRACKS];
+
+    int numTracks, initialPosition;
+
+    printf("Enter the number of tracks: ");
+
+    scanf("%d", &numTracks);
+
+    if (numTracks > MAX_TRACKS) {
+
+        printf("Error: Number of tracks exceeds the maximum limit.\n");
+
+        return 1;
+
+    }
+
+    printf("Enter the track positions:\n");
+
+    for (int i = 0; i < numTracks; i++) {
+
+        scanf("%d", &tracks[i]);
+
+    }
+
+    printf("Enter the initial position of the head: ");
+
+    scanf("%d", &initialPosition);
+
+    float avgHeadMovement = calculateAverageHeadMovement(tracks, numTracks, initialPosition);
+
+    printf("Average head movement: %.2f\n", avgHeadMovement);
+
+    return 0;
+
+}
